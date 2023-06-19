@@ -26,7 +26,7 @@ export default function App (){
         });
         unsuscribe();
         
-/*         signInWithEmailAndPassword(auth, "a@a.aa", "hola123"); */
+        /* signInWithEmailAndPassword(auth, "admin@domiexpress.admin", "config-ñ77@"); */
 
     }, [isLogueado]);
 

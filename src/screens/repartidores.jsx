@@ -14,9 +14,11 @@ export default function Repartidores (){
             if (res.result[0]) {
                 setUltimoElemento(res.result[2]);
                 setRepartidores( repartidores == undefined ? res.result[1] : [...repartidores, ...res.result[1]]);
+            } else {
+                alert(res.result[1]);
             }
-        } catch (error) {
-         
+        } catch (e) {
+            console.log("err");
         }
     }
 

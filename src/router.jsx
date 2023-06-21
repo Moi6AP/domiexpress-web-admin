@@ -25,8 +25,6 @@ export default function App (){
             }
         });
         unsuscribe();
-        
-        /* signInWithEmailAndPassword(auth, "admin@domiexpress.admin", "config-ñ77@"); */
 
     }, [isLogueado]);
 
@@ -56,7 +54,7 @@ export default function App (){
                 </Flex>
                 :
                 <Routes>
-                    <Route path="/" element={<IniciarSesion/>} />
+                    <Route path="/" element={<IniciarSesion isLogueado={setUserSession} />} />
                 </Routes>
             }
         </BrowserRouter>

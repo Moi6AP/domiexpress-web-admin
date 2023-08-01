@@ -13,10 +13,13 @@ export default function General (){
     const [infoGeneral, setInfoGeneral] = useState({usuarios:undefined, usersAdmin:undefined, repartidores:undefined, pedidosTotal:undefined, pedidosEnCurso:undefined});
     
     const [costoServicios, setCostoServicios] = useState(undefined);
-    const [servicios, setServicios] = useState(undefined);
 
     const [usersAdmin, setUsersAdmin] = useState(undefined);
     const [ultimoElementoUsersAdmin, setUltimoElementoUsersAdmin] = useState(false);
+
+    const [servicios, setServicios] = useState(undefined);
+    const [ultimoElementoServicios, setUltimoElementoServicios] = useState(false);
+    const [filtro, setFiltro] = useState(1);
 
     const [loading, setLoading] = useState(false);
     const [loadData, setLoadData] = useState(false);
@@ -27,40 +30,44 @@ export default function General (){
     const [modalAddCosto, setModalAddCosto] = useState(false);
     const inputsAddCosto = useRef({desdeKM:"", hastaKM:"", costo:""});
 
+
     // GET INFO API (FETCH)
 
-    async function getPedidos (){
+    async function getServicios (){
 
+        const filtroData = filtro == 1 ? "fecha" : filtro == 4 ? "fechaPersonalizada" : "masAntiguos";
+
+        setLoadData(true);
+        const res = await api("post", "/getServicios", {ultimoElemento: ultimoElementoServicios !== false ? ultimoElementoServicios : undefined, filtro:filtroData})
+        setLoadData(false);
+        if (res.result[0]) {
+            setUltimoElementoServicios(res.result[2]);
+            setServicios( (servicios == undefined) ? res.result[1] : [...servicios, ...res.result[1]]);
+        } else {
+            alert(res.result[1]);
+        }
     }
 
     async function getUsersAdmin (){
-        try {
-            setLoadData(true);
-            const res = await api("post", "/getUsersAdmin", {ultimoElemento: ultimoElementoUsersAdmin !== false ? ultimoElementoUsersAdmin : undefined})
-            setLoadData(false);
-            if (res.result[0]) {
-                setUltimoElementoUsersAdmin(res.result[2]);
-                setUsersAdmin( (usersAdmin == undefined) ? res.result[1] : [...usersAdmin, ...res.result[1]]);
-            } else {
-                alert(res.result[1]);
-            }
-        } catch (e) {
-            console.log(e);
+        setLoadData(true);
+        const res = await api("post", "/getUsersAdmin", {ultimoElemento: ultimoElementoUsersAdmin !== false ? ultimoElementoUsersAdmin : undefined})
+        setLoadData(false);
+        if (res.result[0]) {
+            setUltimoElementoUsersAdmin(res.result[2]);
+            setUsersAdmin( (usersAdmin == undefined) ? res.result[1] : [...usersAdmin, ...res.result[1]]);
+        } else {
+            alert(res.result[1]);
         }
     }
 
     async function getInfoGeneral (){
-        try {
-            const res = await api("post", "/getInfoGeneral", {});
-            if (res.result[0]) {
-                const data = res.result[1];
-                setCostoServicios(data.costoServicios);
-                setInfoGeneral({usuarios:data.cantidadUsersNormales, usersAdmin:data.cantidadUsersAdmin, repartidores:data.cantidadUsersRepartidores, pedidosTotal:data.cantidadPedidosTotal, pedidosEnCurso:data.cantidadPedidosCurso});
-            } else {
-                alert(res.result[1]);
-            }
-        } catch (e) {
-        
+        const res = await api("post", "/getInfoGeneral", {});
+        if (res.result[0]) {
+            const data = res.result[1];
+            setCostoServicios(data.costoServicios);
+            setInfoGeneral({usuarios:data.cantidadUsersNormales, usersAdmin:data.cantidadUsersAdmin, repartidores:data.cantidadUsersRepartidores, pedidosTotal:data.cantidadPedidosTotal, pedidosEnCurso:data.cantidadPedidosCurso});
+        } else {
+            alert(res.result[1]);
         }
     }
 
@@ -169,13 +176,36 @@ export default function General (){
         } else {
             alert("Rellena todos los campos. (Los valores tienen que ser mayor a cero.)");
         }
-    }
+    } 
 
 
     useEffect(()=>{
         getInfoGeneral();
         getUsersAdmin();
     }, []);
+
+    useEffect(()=>{
+        console.log("aaa");
+        (async()=>{
+            if (filtro !== 3) {
+                setUltimoElementoServicios(false);
+                setServicios(undefined);
+                setLoadData(true);
+
+                const filtroData = filtro == 1 ? "fecha" : filtro == 4 ? "fechaPersonalizada" : "masAntiguos";  
+                const res = await api("post", "/getServicios", {filtro:filtroData})
+                setLoadData(false);
+                if (res.result[0]) {
+                    setUltimoElementoServicios(res.result[2]);
+                    setServicios(res.result[1]);
+                } else {
+                    alert(res.result[1]);
+                }
+            } else {
+
+            }
+        })();
+    }, [filtro]);
 
     return (
         <Box overflowX="hidden" overflowY="scroll" height="100%" width="82vw" p="2vh">
@@ -308,9 +338,9 @@ export default function General (){
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                           ))}  
+                           ))}
                         </Flex> 
-                    : <Flex m="1%" ><Text color="#616161">No hay usuarios registrados.</Text></Flex>
+                    : <Flex m="1%" ><Text color="#616161">Sin usuarios registrados.</Text></Flex>
                 }
                 <Text display={ultimoElementoUsersAdmin !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getUsersAdmin()}}>
                     { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : "Ver mas"} 
@@ -326,7 +356,7 @@ export default function General (){
                 </Flex>
                 {   costoServicios == undefined ?
                         <Spinner ml="auto" mr="auto" color="#646464" my="2vh" w="1.2vw" h="1.2vw"/>
-                    : 
+                    :  Object.keys(costoServicios).length > 0 ?
                         <Flex border="1px solid #E8E8E8" flexDir="column" mt="2.5vh">
                             <Flex width="100%" >
                                 <Flex p="1vh" justifyContent="center" w="50%" borderRight="1px solid #E8E8E8">
@@ -351,82 +381,63 @@ export default function General (){
                                     </Flex>
                                 </Flex>
                             ))}  
-                     </Flex>    
+                     </Flex>
+                    : <Flex m="1%" ><Text color="#616161">No hay costos.</Text></Flex> 
                 }
             </Flex>
 
-            <Flex borderRadius="0.5vw" width="80vw" p="1.2vw" border="1px solid #E8E8E8" flexDir="column" mt="4vh">
+-            <Flex pb={ultimoElementoServicios === false ? "2.4%" : "0" } borderRadius="0.5vw" width="80vw" p="1.2vw" border="1px solid #E8E8E8" flexDir="column" mt="4vh">
                 <Flex alignItems="center" justifyContent="space-between">
                     <Text ml="1vw" fontSize="3.5vh" fontWeight="800">Servicios</Text>
                     <Box mr="2vw">
-                        <Select borderRadius="1vh" border="1px solid #E8E8E8" fontSize="2.23vh" cursor="pointer">
-                            <option style={{cursor:"pointer", fontSize:"2vh"}}>En curso</option>
-                            <option style={{cursor:"pointer", fontSize:"2vh"}}>Fecha Personalizada</option>
+                        <Select value={filtro} onChange={(e)=>setFiltro(e.target.value)} borderRadius="1vh" border="1px solid #E8E8E8" fontSize="2.23vh" cursor="pointer">
+                            <option value={1} style={{cursor:"pointer", fontSize:"2vh"}}>Mas recientes</option>
+                            <option value={2} style={{cursor:"pointer", fontSize:"2vh"}}>Mas antiguos</option>
+                            <option value={3} style={{cursor:"pointer", fontSize:"2vh"}}>En curso</option> 
+                            <option value={4} style={{cursor:"pointer", fontSize:"2vh"}}>Fecha Personalizada</option>
                         </Select>
                     </Box>
                 </Flex>
-                {   servicios == undefined ?
-                        <Spinner ml="auto" mr="auto" color="#646464" my="2vh" w="1.2vw" h="1.2vw"/>
-                    :
-                        <Flex border="1px solid #E8E8E8" flexDir="column" mt="2.5vh">
-                            <Flex width="100%" >
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Usuario</Text>
+                <Flex>
+                    {   servicios == undefined ?
+                            <Spinner ml="auto" mr="auto" color="#646464" my="2vh" w="1.2vw" h="1.2vw"/>
+                        : servicios.length > 0 ?
+                            <Flex border="1px solid #E8E8E8" flexDir="column" mt="2.5vh">
+                                <Flex width="100%" >
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text color="#666666" fontWeight="bold">Usuario</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text color="#666666" fontWeight="bold">Repartidor</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text color="#666666" fontWeight="bold">Cantidad de pedidos</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text color="#666666" fontWeight="bold">Costo total</Text>
+                                    </Flex> 
                                 </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Repartidor</Text>
+                                <Flex borderTop="1px solid #E8E8E8" width="100%">
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text>{}</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text>Maicol Perez</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text>4</Text>
+                                    </Flex>
+                                    <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
+                                        <Text>$123.034</Text>
+                                    </Flex>
                                 </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Pedidos</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Costo</Text>
-                                </Flex>
-                            </Flex>
-                            <Flex borderTop="1px solid #E8E8E8" width="100%">
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Moises Avila</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Maicol Perez</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>4</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>$123.034</Text>
-                                </Flex>
-                            </Flex>
-                            <Flex borderTop="1px solid #E8E8E8" width="100%">
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Moises Avila</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Maicol Perez</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>4</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>$123.034</Text>
-                                </Flex>
-                            </Flex>
-                            <Flex borderTop="1px solid #E8E8E8" width="100%">
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Moises Avila</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>Maicol Perez</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>4</Text>
-                                </Flex>
-                                <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                    <Text>$123.034</Text>
-                                </Flex>
-                            </Flex>
-                        </Flex>      
-                }
+                            </Flex>   
+                        :   <Flex m="1%" ><Text color="#616161">Sin servicios.</Text></Flex>
+                    }
+                    {<Text display={ultimoElementoServicios !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getServicios()}}>
+                        { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : "Ver mas"} 
+                    </Text>}
+                </Flex>
             </Flex>
         </Box>
     )

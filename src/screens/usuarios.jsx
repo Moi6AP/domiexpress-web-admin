@@ -68,7 +68,7 @@ export default function Repartidores (){
                                         <Text>{repartidor.cantidadPedidosRealizados}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>{repartidor.saldo}</Text>
+                                        <Text>${repartidor.saldo}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
                                         <Text>{getFecha(repartidor.fechaCreado["_seconds"])}</Text>

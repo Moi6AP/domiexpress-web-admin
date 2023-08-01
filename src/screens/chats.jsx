@@ -7,7 +7,7 @@ export default function Chats (){
 
     return (
         <Flex>
-            <Text>asd</Text>
+            <Text></Text>
         </Flex>
     )
 }

@@ -20,7 +20,7 @@ async function getUserToken (){
 export default async function api(tipoPeticion, ruta, body, urlFull){
 
     try {
-        return await axios[tipoPeticion](`${process.env.NODE_ENV == "development" ? `http://192.168.1.16:4200${urlFull ? "" : "admin"}`+ruta : `https://domiexpress-api.ue.r.appspot.com${urlFull ? "" : "admin"}`+ruta}`, body, {
+        return await axios[tipoPeticion](`${process.env.NODE_ENV == "development" ? `http://192.168.1.16:4200${urlFull ? "" : "/admin"}`+ruta : `https://domiexpress-api.ue.r.appspot.com${urlFull ? "" : "/admin"}`+ruta}`, body, {
             headers:{
                 "token": await getUserToken()
             }

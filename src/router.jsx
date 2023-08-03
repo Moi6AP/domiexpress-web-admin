@@ -2,15 +2,18 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { Box, Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useState } from 'react';
 import { auth } from './utils/fbConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import Navbar from "./components/navbar";
 import Repartidores from "./screens/repartidores";
 import General from "./screens/general";
 import Usuarios from "./screens/usuarios";
 import Chats from "./screens/chats";
+import ChatsAdmin from "./screens/chatsAdmin";
 import IniciarSesion from "./screens/iniciarSesion";
 import IfAuthFalseRedirigir from './components/IfAuthFalseRedirigir';
 import api from './utils/api';
+import ChatSoporteProvider from './context/chatSoporteContextProvider';
+import ChatSoporteAdminProvider from './context/chatSoporteAdminContextProvider';
 
 export default function App (){
 
@@ -41,24 +44,29 @@ export default function App (){
 
     return (
         <BrowserRouter>
-            <IfAuthFalseRedirigir userSession={userSession} />
-            { userSession && <Navbar logout={setUserSession} />}
-            { userSession ?
-                <Flex h="100vh" ml="15vw" bg="#313131">
-                    <Flex p="2vh" w="100%" borderRadius="1vh" m="0.7vw" bg="#fff">
+            <ChatSoporteAdminProvider isLogueado={userSession}>
+                <ChatSoporteProvider isLogueado={userSession}>
+                    <IfAuthFalseRedirigir userSession={userSession} />
+                    { userSession && <Navbar logout={setUserSession} />}
+                    { userSession ?
+                        <Flex h="100vh" ml="15vw" bg="#313131">
+                            <Flex p="2vh" w="100%" borderRadius="1vh" m="0.7vw" bg="#fff">
+                                <Routes>
+                                    <Route path="/general" element={<General/>} />
+                                    <Route path="/repartidores" element={<Repartidores/>} />
+                                    <Route path="/usuarios" element={<Usuarios/>} />
+                                    <Route path="/chats" element={<Chats/>} />
+                                    <Route path="/chatsAdmin" element={<ChatsAdmin/>} />
+                                </Routes>
+                            </Flex>
+                        </Flex>
+                        :
                         <Routes>
-                            <Route path="/" element={<General/>} />
-                            <Route path="/repartidores" element={<Repartidores/>} />
-                            <Route path="/usuarios" element={<Usuarios/>} />
-                            <Route path="/chats" element={<Chats/>} />
+                            <Route path="/" element={<IniciarSesion isLogueado={setUserSession} />} />
                         </Routes>
-                    </Flex>
-                </Flex>
-                :
-                <Routes>
-                    <Route path="/" element={<IniciarSesion isLogueado={setUserSession} />} />
-                </Routes>
-            }
+                    }
+                </ChatSoporteProvider>
+            </ChatSoporteAdminProvider>
         </BrowserRouter>
     )
 }

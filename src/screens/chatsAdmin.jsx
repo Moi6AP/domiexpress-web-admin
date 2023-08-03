@@ -1,16 +1,16 @@
 import { Button, Flex, Image, Input, InputGroup, InputRightElement, Spinner, Text } from "@chakra-ui/react";
 import { endBefore, equalTo, get, limitToFirst, limitToLast, off, onChildAdded, onChildChanged, onValue, orderByChild, orderByKey, orderByPriority, orderByValue, query, ref, startAfter, startAt } from "firebase/database";
-import { dbRealtime } from "../utils/fbConfig";
+import { auth, dbRealtime } from "../utils/fbConfig";
 import { useContext, useEffect, useRef, useState } from "react";
-import { chatSoporteContext } from "../context/chatSoporteContextProvider";
 import api from "../utils/api";
+import { chatSoporteAdminContext } from "../context/chatSoporteAdminContextProvider";
 
 
-export default function Chats (){
+export default function ChatsAdmin (){
 
     const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
-    const { chatSoporte } = useContext(chatSoporteContext)
+    const { chatSoporteAdmin } = useContext(chatSoporteAdminContext)
 
     const [chats, setChats] = useState(false);
     const [cargandoSendMsg, setCargandoSendMsg] = useState(false);
@@ -36,23 +36,25 @@ export default function Chats (){
 
     async function getData (){
         setCargando(true);
-        onChildAdded(query(ref(dbRealtime, "users"), orderByChild("ultimaActualizacion"), limitToLast(limiteChats)), (data)=>{
+        onChildAdded(query(ref(dbRealtime, "chatsAdmin"), orderByChild("adminUID_1"), equalTo(auth.currentUser.uid), limitToLast(limiteChats)), onMsg, onErr);
+
+        onChildAdded(query(ref(dbRealtime, "chatsAdmin"), orderByChild("adminUID_2"), equalTo(auth.currentUser.uid), limitToLast(limiteChats)), onMsg, onErr);
+
+        function onMsg (data) {
+
             setCargando(false);
 
             if (data.exists()) {
                 setChats(chats => [{...data.val(), uid:data.key}, ...(chats === false ? [] : chats)]);
             }
-        }, (err)=>{
-            if (chats === false) {
-                setChats([]);
-            }
+        }
+
+        function onErr (err) {
+            console.log(err);
+
             alert("Sucedio un error, comprueba tu conexión a internet y si el error persiste, contacta al desarrollador.");
             setCargando(false);
-        });
-    }
-
-    function setMoreData(){
-        /* getDataMore(); */
+        }
     }
 
     function fechaMsg (fechaProp){
@@ -95,7 +97,7 @@ export default function Chats (){
         setCargandoSendMsg(true);
         if (!cargandoSendMsg) {
             msgPropio.current = [false, true];
-            const res = await api("post", "/mandarMensajeSoporte", {mensaje:msg, usuarioID:chatSelect.uid}, true);
+            const res = await api("post", "/mandarMensajeSoporteAdmin", {mensaje:msg, usuarioID:devolverPropiedad(chatSelect).replace("_nombre", ""), chatID:chatSelect.uid});
             if (res.result[0]) {
                 setMsg("");
             }
@@ -131,6 +133,18 @@ export default function Chats (){
             setBuscarChatEmail(false);
         }
     }
+
+    function devolverPropiedad (chat){
+        let result = "";
+        const chat1 = Object.keys(chat);
+        chat1.map((campo)=>{
+            if (campo.replace("_nombre", "") !== campo && campo.replace("_nombre", "") !== auth.currentUser.uid) {
+                result = campo;
+            }
+        });
+
+        return result;
+    }
     
     useEffect(()=>{
         getData();
@@ -139,33 +153,33 @@ export default function Chats (){
     }, []);
 
     useEffect(()=>{
-        if (chatSoporte !== false && cargoPagina) {
+        if (chatSoporteAdmin !== false && cargoPagina) {
             let chatsNew = [...chats];
             
             try {
-                if (!chatSoporte.offNewMsg) {
-                    chatsNew.splice(chatsNew.findIndex(a => a.uid === chatSoporte.uid), 1);
+                if (!chatSoporteAdmin.offNewMsg) {
+                    chatsNew.splice(chatsNew.findIndex(a => a.uid === chatSoporteAdmin.uid), 1);
                 }
             } catch {
                 
             }
 
-            if (chatSoporte.offNewMsg) {
-                const index = chatsNew.findIndex(a => a.uid === chatSoporte.uid);
+            if (chatSoporteAdmin.offNewMsg) {
+                const index = chatsNew.findIndex(a => a.uid === chatSoporteAdmin.uid);
                     if (index > -1) {
-                        chatsNew[index] = chatSoporte;
+                        chatsNew[index] = chatSoporteAdmin;
                     } 
             } else {
-                chatsNew = [chatSoporte, ...chatsNew];
+                chatsNew = [chatSoporteAdmin, ...chatsNew];
             }
 
             setChats(chatsNew);
 
-            if (chatSelect.uid === chatSoporte.uid) {
-                selectChat(chatSoporte);
+            if (chatSelect.uid === chatSoporteAdmin.uid) {
+                selectChat(chatSoporteAdmin);
             }
         }
-    }, [chatSoporte]);
+    }, [chatSoporteAdmin]);
 
     useEffect(()=>{
         if (chats !== false && !cargoPagina) {
@@ -178,16 +192,7 @@ export default function Chats (){
         <Flex w="100%">
             <Flex borderRight="1px solid #e4e4e4" pr="1%" mt="2vh" flexDir="column" width="25%">
                 <Text ml="1vw" fontSize="3.5vh" fontWeight="800">Chats</Text>
-                <Flex ml="auto" mb="0.5vh">
-                    <Flex mr="1vw" alignItems="center">
-                        <Flex mr="0.3vw" bg="#ebaa33" borderRadius="10px" h="7px" w="7px" />
-                        <Text fontSize="1.7vh">Usuarios</Text>
-                    </Flex>
-                    <Flex alignItems="center">
-                        <Flex mr="0.3vw" bg="#323dce" borderRadius="10px" h="7px" w="7px" />
-                        <Text fontSize="1.8vh">Repartidores</Text>
-                    </Flex>
-                </Flex>
+                
                 <form style={{display:"flex", marginBottom:"1vh", height:"10%", alignItems:"center", width:"100%"}} >
                     <InputGroup>
                         <Input value={emailInput} onChange={(e)=>setEmailInput(e.target.value)} type="email" outline="none" _focus={{border:"1px solid #d8d8d8", boxShadow:"0px 0px 3px 1px #d8d8d8"}} w="100%" p="0.5vw" borderRadius="0.4vw" border="1px solid #b4b4b4" placeholder="Busca un usuario por email.."/>
@@ -213,13 +218,12 @@ export default function Chats (){
                                         <Text fontWeight="bold">{chatEmail.nombre.length > 21 ? chatEmail.nombre.slice(0, 21)+"..." : chatEmail.nombre}</Text>
                                         <Text fontWeight={!chatEmail.ultimaActualizacion && "bold"} fontSize="2.2vh" color="#666666">{chatEmail.ultimaActualizacion ? getUltimoMsg(chatEmail.chatSoporte).length > 25 ? getUltimoMsg(chatEmail.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatEmail.chatSoporte) : "Sin mensajes"}</Text>
                                         <Flex alignItems="center">
-                                            <Flex bg={chatEmail.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                             <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{chatEmail.ultimaActualizacion ? fechaMsg(chatEmail.ultimaActualizacion) : "-"}</Text>
                                         </Flex>
                                     </Flex>
                                 </Flex>
                                 : <Text>{ chatEmail === "no-existe" ? "No se encontraron resultados." : chatEmail}</Text>
-                        : (chats.length > 0) ? 
+                        :  chats.length > 0 ? 
                             chats.map((user)=>(
                                 <Flex alignItems="center" bg={chatSelect.uid == user.uid ? "#eeeeee" : "transparent"} key={user.uid} onClick={()=>{ setTimeout(()=>inputSendMsgRef.current.focus(), 50); setChat(false); selectChat(user); setChatSelect(user)}} mb="2vh" cursor="pointer" _hover={{backgroundColor:"#f8f8f8"}} borderRadius="0.6vw" p="2%">
                                     {user.imagenPerfil ? 
@@ -230,19 +234,17 @@ export default function Chats (){
                                         <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
                                     }
                                     <Flex w="100%" flexDir="column">
-                                        <Text fontWeight="bold">{user.nombre.length > 21 ? user.nombre.slice(0, 21)+"..." : user.nombre}</Text>
+                                        <Text fontWeight="bold">{user[devolverPropiedad(user)].length > 21 ? user[devolverPropiedad(user)].slice(0, 21)+"..." : user[devolverPropiedad(user)]}</Text>
                                         <Text fontWeight={!user.ultimaActualizacion ? "bold" : user.bold ? "900" : "normal"} fontSize="2.2vh" color={user.bold ? "#000" : "#666666"}>{user.ultimaActualizacion ? getUltimoMsg(user.chatSoporte).length > 25 ? getUltimoMsg(user.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(user.chatSoporte) : "Sin mensajes"}</Text>
                                         <Flex alignItems="center">
-                                            <Flex bg={user.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                             <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{user.ultimaActualizacion ? fechaMsg(user.ultimaActualizacion) : "-"}</Text>
                                         </Flex>
                                     </Flex>
                                 </Flex>
                             ))
-                            : <Text>No tienes chats:) </Text>
+                            : <Text>No tienes chats:)</Text>
                         : <Spinner mx="auto" color="#646464" mt="1vh" w="1vw" h="1vw" /> }
                 </Flex>
-                {/* <Text onClick={setMoreData}>Ver mas</Text> */}
             </Flex>
             { chatSelect !== false ?
                     <Flex flexDir="column" h="100%" w="75%">
@@ -254,11 +256,11 @@ export default function Chats (){
                                 : 
                                 <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
                             }
-                            <Text fontWeight="bold">{chatSelect.nombre}</Text>
+                            <Text fontWeight="bold">{chatSelect[devolverPropiedad(chatSelect)]}</Text>
                         </Flex>
                         <Flex scrollBehavior="smooth" ref={scrollChatRef} py="1%" overflowY="scroll" flexDir="column" h="100%">
                             {chat !== false && chat.map((msg)=>(
-                                <Flex key={msg.mensaje+msg.fecha} my="0.5%" p="1%" pb="0.3%" borderRadius="0.5vw" borderBottomRightRadius="0" bg={msg.rol == "soporte" ? "#48ca68" : "#666666"} minW="20%" maxW="70%" flexDir="column" mr={msg.rol == "soporte" ? "2%" : "auto"} ml={msg.rol == "soporte" ? "auto" : "2%"}>
+                                <Flex key={msg.mensaje+msg.fecha} my="0.5%" p="1%" pb="0.3%" borderRadius="0.5vw" borderBottomRightRadius="0" bg={msg.uid == auth.currentUser.uid ? "#48ca68" : "#666666"} minW="20%" maxW="70%" flexDir="column" mr={msg.uid == auth.currentUser.uid ? "2%" : "auto"} ml={msg.uid == auth.currentUser.uid ? "auto" : "2%"}>
                                     <Text color="#fff">{msg.mensaje}</Text>
                                     <Text ml="auto" mr="2%" fontSize="1.8vh" color="#f1f1f1">{fechaMsg(msg.fecha)}</Text>
                                 </Flex>

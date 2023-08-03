@@ -68,7 +68,7 @@ export default function Repartidores (){
                                         <Text>{repartidor.cantidadPedidosRealizados}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>${repartidor.saldo}</Text>
+                                        <Text>${repartidor.tuSaldo}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
                                         <Text>{getFecha(repartidor.fechaCreado["_seconds"])}</Text>
@@ -78,9 +78,9 @@ export default function Repartidores (){
                         </Flex>
                     : <Flex m="1%" ><Text color="#616161">Sin usuarios.</Text></Flex>
                 }
-                <Text display={ultimoElemento !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getUsuarios()}}>
+                <Flex display={ultimoElemento !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getUsuarios()}}>
                     { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : "Ver mas"} 
-                </Text>
+                </Flex>
             </Flex>
     </Box>
     )

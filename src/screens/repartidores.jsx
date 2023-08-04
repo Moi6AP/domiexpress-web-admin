@@ -168,19 +168,19 @@ export default function Repartidores (){
                            { repartidores.map((repartidor)=>(
                                 <Flex key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>{repartidor.nombre}</Text>
+                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>{repartidor.email}</Text>
+                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.email}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>{repartidor.cantidadPedidosRealizados}</Text>
+                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.cantidadPedidosRealizados}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>${repartidor.ganancias}</Text>
+                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>${repartidor.ganancias}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="20%" borderRight="1px solid #E8E8E8">
-                                        <Text>{repartidor.vehiculo}</Text>
+                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.vehiculo}</Text>
                                     </Flex>
                                 </Flex>
                            ))}

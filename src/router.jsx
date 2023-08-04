@@ -52,7 +52,7 @@ export default function App (){
                         <Flex h="100vh" ml="15vw" bg="#313131">
                             <Flex p="2vh" w="100%" borderRadius="1vh" m="0.7vw" bg="#fff">
                                 <Routes>
-                                    <Route path="/general" element={<General/>} />
+                                    <Route path="/" element={<General/>} />
                                     <Route path="/repartidores" element={<Repartidores/>} />
                                     <Route path="/usuarios" element={<Usuarios/>} />
                                     <Route path="/chats" element={<Chats/>} />

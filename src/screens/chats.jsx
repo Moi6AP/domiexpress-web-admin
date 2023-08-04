@@ -1,6 +1,6 @@
 import { Button, Flex, Image, Input, InputGroup, InputRightElement, Spinner, Text } from "@chakra-ui/react";
 import { endBefore, equalTo, get, limitToFirst, limitToLast, off, onChildAdded, onChildChanged, onValue, orderByChild, orderByKey, orderByPriority, orderByValue, query, ref, startAfter, startAt } from "firebase/database";
-import { dbRealtime } from "../utils/fbConfig";
+import { auth, dbRealtime } from "../utils/fbConfig";
 import { useContext, useEffect, useRef, useState } from "react";
 import { chatSoporteContext } from "../context/chatSoporteContextProvider";
 import api from "../utils/api";
@@ -8,7 +8,7 @@ import api from "../utils/api";
 
 export default function Chats (){
 
-    const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
     const { chatSoporte } = useContext(chatSoporteContext)
 
@@ -43,9 +43,8 @@ export default function Chats (){
                 setChats(chats => [{...data.val(), uid:data.key}, ...(chats === false ? [] : chats)]);
             }
         }, (err)=>{
-            if (chats === false) {
-                setChats([]);
-            }
+
+            setChats([]);
             alert("Sucedio un error, comprueba tu conexión a internet y si el error persiste, contacta al desarrollador.");
             setCargando(false);
         });
@@ -106,7 +105,7 @@ export default function Chats (){
     function getUltimoMsg (chat){
         if (chat !== false) {
             const msg = chat[Object.keys(chat)[Object.keys(chat).length-1]];
-            return msg.rol == "soporte" ? "Tu: "+msg.mensaje : msg.mensaje;
+            return msg.rol == "soporte" ? msg.adminNombre == auth.currentUser.displayName ? "Tu: "+msg.mensaje : "Admin: "+msg.mensaje : msg.mensaje;
         }
     }
 
@@ -115,12 +114,12 @@ export default function Chats (){
         setBuscarChatEmail(true);
         if (emailInput !== "" && !cargando) {
             setCargando(true);
-            const res = await api("post", "/buscarUserChat", {email:emailInput});
+            const res = await api("post", "/buscarUserChat", {search:emailInput});
             if (res.result[0]) {
-                if (res.result[1] !== "no-existe") {
+                if (typeof res.result[1] !== "string") {
                     setChatEmail({...res.result[1][Object.keys(res.result[1])[0]], uid:Object.keys(res.result[1])[0]});
                 } else {
-                    setChatEmail("no-existe");   
+                    setChatEmail( res.result[1]);   
                 }
             } else {
                 setChatEmail(res.result[1]);
@@ -172,6 +171,13 @@ export default function Chats (){
             off(ref(dbRealtime, "users"), "child_added");
             setCargoPagina(true);
         }
+
+        setTimeout(()=>{
+            if (chats === false) {
+                setChats(chatsNew => chatsNew !== false ? chatsNew : []);
+                setCargando(false);
+            }
+        }, 2500);
     }, [chats]);
 
     return (
@@ -190,7 +196,7 @@ export default function Chats (){
                 </Flex>
                 <form style={{display:"flex", marginBottom:"1vh", height:"10%", alignItems:"center", width:"100%"}} >
                     <InputGroup>
-                        <Input value={emailInput} onChange={(e)=>setEmailInput(e.target.value)} type="email" outline="none" _focus={{border:"1px solid #d8d8d8", boxShadow:"0px 0px 3px 1px #d8d8d8"}} w="100%" p="0.5vw" borderRadius="0.4vw" border="1px solid #b4b4b4" placeholder="Busca un usuario por email.."/>
+                        <Input value={emailInput} onChange={(e)=>setEmailInput(e.target.value)} type="email" outline="none" _focus={{border:"1px solid #d8d8d8", boxShadow:"0px 0px 3px 1px #d8d8d8"}} w="100%" p="0.5vw" borderRadius="0.4vw" border="1px solid #b4b4b4" placeholder="Busca un usuario por ID, email.."/>
                         <InputRightElement display={buscarChatEmail ? "flex" :  "none"} onClick={()=>{setEmailInput(""); setBuscarChatEmail(false); chatEmail.uid == chatSelect.uid && setChatSelect(false) }} cursor="pointer" h="100%" pr="1%" alignItems="center">
                             <Image w="1.6vw" h="1.6vw" src={require("../assets/x.png")} />
                         </InputRightElement>
@@ -210,10 +216,10 @@ export default function Chats (){
                                         <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
                                     }
                                     <Flex w="100%" flexDir="column">
-                                        <Text fontWeight="bold">{chatEmail.nombre.length > 21 ? chatEmail.nombre.slice(0, 21)+"..." : chatEmail.nombre}</Text>
-                                        <Text fontWeight={!chatEmail.ultimaActualizacion && "bold"} fontSize="2.2vh" color="#666666">{chatEmail.ultimaActualizacion ? getUltimoMsg(chatEmail.chatSoporte).length > 25 ? getUltimoMsg(chatEmail.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatEmail.chatSoporte) : "Sin mensajes"}</Text>
+                                        <Text color={chatEmail.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{chatEmail.nombre.length > 21 ? chatEmail.nombre.slice(0, 21)+"..." : chatEmail.nombre}</Text>
+                                        <Text fontWeight={!chatEmail.ultimaActualizacion && "bold"} fontSize="2.2vh" color={chatEmail.delCuenta ? "#c43131" : chatEmail.bold ? "#000" : "#666666"}>{chatEmail.ultimaActualizacion ? getUltimoMsg(chatEmail.chatSoporte).length > 25 ? getUltimoMsg(chatEmail.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatEmail.chatSoporte) : "Sin mensajes"}</Text>
                                         <Flex alignItems="center">
-                                            <Flex bg={chatEmail.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
+                                            <Flex bg={chatEmail.delCuenta ? "#c43131" : chatEmail.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                             <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{chatEmail.ultimaActualizacion ? fechaMsg(chatEmail.ultimaActualizacion) : "-"}</Text>
                                         </Flex>
                                     </Flex>
@@ -230,16 +236,16 @@ export default function Chats (){
                                         <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
                                     }
                                     <Flex w="100%" flexDir="column">
-                                        <Text fontWeight="bold">{user.nombre.length > 21 ? user.nombre.slice(0, 21)+"..." : user.nombre}</Text>
-                                        <Text fontWeight={!user.ultimaActualizacion ? "bold" : user.bold ? "900" : "normal"} fontSize="2.2vh" color={user.bold ? "#000" : "#666666"}>{user.ultimaActualizacion ? getUltimoMsg(user.chatSoporte).length > 25 ? getUltimoMsg(user.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(user.chatSoporte) : "Sin mensajes"}</Text>
+                                        <Text color={user.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{user.nombre.length > 21 ? user.nombre.slice(0, 21)+"..." : user.nombre}</Text>
+                                        <Text fontWeight={!user.ultimaActualizacion ? "bold" : user.bold ? "900" : "normal"} fontSize="2.2vh" color={user.delCuenta ? "#c43131" : user.bold ? "#000" : "#666666"}>{user.ultimaActualizacion ? getUltimoMsg(user.chatSoporte).length > 25 ? getUltimoMsg(user.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(user.chatSoporte) : "Sin mensajes"}</Text>
                                         <Flex alignItems="center">
-                                            <Flex bg={user.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
+                                            <Flex bg={user.delCuenta ? "#c43131" : user.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                             <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{user.ultimaActualizacion ? fechaMsg(user.ultimaActualizacion) : "-"}</Text>
                                         </Flex>
                                     </Flex>
                                 </Flex>
                             ))
-                            : <Text>No tienes chats:) </Text>
+                            : <Text>No tienes chats :)</Text>
                         : <Spinner mx="auto" color="#646464" mt="1vh" w="1vw" h="1vw" /> }
                 </Flex>
                 {/* <Text onClick={setMoreData}>Ver mas</Text> */}
@@ -254,11 +260,12 @@ export default function Chats (){
                                 : 
                                 <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
                             }
-                            <Text fontWeight="bold">{chatSelect.nombre}</Text>
+                            <Text color={chatSelect.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{chatSelect.nombre}</Text>
                         </Flex>
                         <Flex scrollBehavior="smooth" ref={scrollChatRef} py="1%" overflowY="scroll" flexDir="column" h="100%">
                             {chat !== false && chat.map((msg)=>(
-                                <Flex key={msg.mensaje+msg.fecha} my="0.5%" p="1%" pb="0.3%" borderRadius="0.5vw" borderBottomRightRadius="0" bg={msg.rol == "soporte" ? "#48ca68" : "#666666"} minW="20%" maxW="70%" flexDir="column" mr={msg.rol == "soporte" ? "2%" : "auto"} ml={msg.rol == "soporte" ? "auto" : "2%"}>
+                                <Flex key={msg.mensaje+msg.fecha} my="0.5%" p="1%" pb="0.3%" borderRadius="0.5vw" borderBottomRightRadius={msg.rol == "soporte" ? "0" : "0.5vw"} borderTopLeftRadius={msg.rol == "soporte" ? "0.5vw" : "0"} bg={msg.rol == "soporte" ? msg.adminNombre == auth.currentUser.displayName ? "#48ca68" : "#9c12d3" : "#666666"} minW="20%" maxW="70%" flexDir="column" mr={msg.rol == "soporte" ? "2%" : "auto"} ml={msg.rol == "soporte" ? "auto" : "2%"}>
+                                    {(msg.rol == "soporte" && msg.adminNombre !== auth.currentUser.displayName) && <Text ml="auto" mr="2%" fontSize="1.8vh" color="#f1f1f1">{msg.adminNombre}</Text>}
                                     <Text color="#fff">{msg.mensaje}</Text>
                                     <Text ml="auto" mr="2%" fontSize="1.8vh" color="#f1f1f1">{fechaMsg(msg.fecha)}</Text>
                                 </Flex>

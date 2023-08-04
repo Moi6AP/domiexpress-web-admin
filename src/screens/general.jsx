@@ -65,7 +65,7 @@ export default function General (){
         if (res.result[0]) {
             const data = res.result[1];
             setCostoServicios(data.costoServicios);
-            setInfoGeneral({usuarios:data.cantidadUsersNormales, usersAdmin:data.cantidadUsersAdmin, repartidores:data.cantidadUsersRepartidores, pedidosTotal:data.cantidadPedidosTotal, pedidosEnCurso:data.cantidadPedidosCurso});
+            setInfoGeneral({usuarios:data.cantidadUsersNormales, usuariosEliminados:data.cantidadUsersNormalesEliminados, usersAdmin:data.cantidadUsersAdmin, usersAdminEliminados:data.cantidadUsersAdminEliminados, repartidores:data.cantidadUsersRepartidores,  repartidoresEliminados:data.cantidadUsersRepartidoresEliminados, pedidosTotal:data.cantidadPedidosTotal, pedidosEnCurso:data.cantidadPedidosCurso});
         } else {
             alert(res.result[1]);
         }
@@ -114,8 +114,9 @@ export default function General (){
         const preguntaDel = window.confirm("¿Estas seguro de eliminar este usuario?");
         if (preguntaDel) {
             setLoading("Eliminando..");
-            const res = await api("post", "/delUser", {delUserID: id});
+            const res = await api("post", "/delUserAdmin", {delUserID: id});
             setLoading(false);
+            console.log(res);
             if (res.result[0] == true) {
                 const usersAdminNew = [...usersAdmin];
                 usersAdminNew.splice(usersAdminNew.findIndex((e => e.uid === id)), 1);
@@ -185,7 +186,6 @@ export default function General (){
     }, []);
 
     useEffect(()=>{
-        console.log("aaa");
         (async()=>{
             if (filtro !== 3) {
                 setUltimoElementoServicios(false);
@@ -243,7 +243,7 @@ export default function General (){
                         <Flex justifyContent="center">
                             {infoGeneral.repartidores === undefined ?  
                                 <Spinner color="#646464" mt="1vh" w="1vw" h="1vw"/>
-                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.repartidores}</Text>}
+                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.repartidores-infoGeneral.repartidoresEliminados}</Text>}
                         </Flex>
                     </Box>
                 </Flex>
@@ -254,7 +254,7 @@ export default function General (){
                         <Flex justifyContent="center">
                             {infoGeneral.usuarios === undefined ?  
                                 <Spinner color="#646464" mt="1vh" w="1vw" h="1vw"/>
-                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.usuarios}</Text>}
+                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.usuarios-infoGeneral.usuariosEliminados}</Text>}
                         </Flex>
                     </Box>
                 </Flex>
@@ -265,7 +265,7 @@ export default function General (){
                         <Flex justifyContent="center">
                             {infoGeneral.usersAdmin === undefined ?  
                                 <Spinner color="#646464" mt="1vh" w="1vw" h="1vw"/>
-                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.usersAdmin}</Text>}
+                                : <Text color="#4B4B4B" fontSize="3.5vh" fontWeight="bold">{infoGeneral.usersAdmin-infoGeneral.usersAdminEliminados}</Text>}
                         </Flex>
                     </Box>
                 </Flex>

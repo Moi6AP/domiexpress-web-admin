@@ -22,16 +22,8 @@ export default function ChatSoporteAdminProvider ({isLogueado, children}){
         return diferenciaEnSegundos < 120;
     }
 
-    function devolverPropiedad (chat){
-        let result = "";
-        const chat1 = Object.keys(chat);
-        chat1.map((campo)=>{
-            if (campo.replace("_nombre", "") !== campo && campo.replace("_nombre", "") !== auth.currentUser.uid) {
-                result = campo;
-            }
-        });
-
-        return result;
+    function uidOtroAdmin (chat, a){
+        return chat.adminUID_1 == auth.currentUser.uid ? 2 : 1;
     }
 
     function onMensajesAdmin (){
@@ -83,10 +75,10 @@ export default function ChatSoporteAdminProvider ({isLogueado, children}){
     return (
         <chatSoporteAdminContext.Provider value={{chatSoporteAdmin, setChatSoporteAdmin}}>
             { newNotificacion && 
-                <Link to="/chats">
+                <Link to="/chatsAdmin">
                     <Flex minW="15vw" flexDir="column" boxShadow="0px 0px 5px 2px #8b8b8b" borderRadius="0.5vw" p="0.7vw" bg="#fff" position="absolute" zIndex={1} bottom="2vh" left="2vw">
                         <Flex alignItems="center">
-                            <Text color="#000" fontWeight="bold">{chatSoporteAdmin[devolverPropiedad(chatSoporteAdmin)]}</Text>
+                            <Text color="#000" fontWeight="bold">{chatSoporteAdmin["adminNombre_"+uidOtroAdmin(chatSoporteAdmin)]}</Text>
                             <Text fontSize="2vh" ml="0.5vw" color="#c02828">Admin</Text>
                         </Flex>
                         <Text color="#5f5f5f">{chatSoporteAdmin.chatSoporte !== false && chatSoporteAdmin.chatSoporte[Object.keys(chatSoporteAdmin.chatSoporte)[Object.keys(chatSoporteAdmin.chatSoporte).length-1]].mensaje}</Text>

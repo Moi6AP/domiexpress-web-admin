@@ -1,10 +1,14 @@
-import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Box, Button, Flex, Input, Spinner, Text } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import api from "../utils/api";
 import { getFecha } from "../utils/funciones";
 import Modal from "../components/modal";
+import Cargando from "../components/cargando";
+import { useNavigate } from "react-router-dom";
 
 export default function Repartidores (){
+
+    const navigate = useNavigate();
 
     const [repartidores, setRepartidores] = useState(undefined);
     const [ultimoElemento, setUltimoElemento] = useState(false);
@@ -13,8 +17,13 @@ export default function Repartidores (){
     const [ultimoElementoSolicitudes, setUltimoElementoSolicitudes] = useState(false);
 
     const [loadData, setLoadData] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [modalVerDocumentos, setModalVerDocumentos] = useState(false);
+
+    const [modalAddUser, setModalAddUser] = useState(false);
+
+    const inputsAddUser = useRef({nombre:"", email:"", pass:""});
     
     async function getRepartidores (){
         setLoadData(true);
@@ -72,6 +81,10 @@ export default function Repartidores (){
         }
     }
 
+    async function addUser (e){
+
+    }
+
      useEffect(()=>{
         getSolicitudes();
         getRepartidores();
@@ -83,6 +96,19 @@ export default function Repartidores (){
 
             </Modal>
 
+            <Modal isOpen={modalAddUser} onClose={()=>setModalAddUser(false)}>
+                <form style={{display:"flex", alignItems:"center", width:"30vw", padding:"5%", flexDirection:"column"}}>
+                    <Text fontWeight="bold" fontSize="3vh">Añadir usuario</Text>
+                    <Flex mt="4%" alignItems="center" w="100%" flexDir="column">
+                       <Input onChange={(e)=>inputsAddUser.current.nombre = e.target.value} w="70%" borderRadius="4px" outline="none" borderWidth="1px" borderColor="#b4b4b4" p="1%" mb="3%" placeholder="Nombre" /> 
+                       <Input onChange={(e)=>inputsAddUser.current.email = e.target.value} w="70%" borderRadius="4px" outline="none" borderWidth="1px" borderColor="#b4b4b4" p="1%" mb="3%" placeholder="Correo electronico" /> 
+                       <Input onChange={(e)=>inputsAddUser.current.pass = e.target.value} w="70%" borderRadius="4px" outline="none" borderWidth="1px" borderColor="#b4b4b4" p="1%" mb="3%" placeholder="Contraseña" /> 
+                    </Flex>
+                    <Button cursor="pointer" _hover={{backgroundColor:"#38C95B"}} transition="all 0.2s" color="#fff" bg="#56D675" fontWeight="bold" w="70%" p="2%" border="none" onClick={(e)=>addUser(e)} type="submit">Agregar usuario</Button>
+                </form>
+            </Modal>
+
+            <Cargando isOpen={loading} txt={loading} />
 
             <Flex pb={ultimoElementoSolicitudes === false ? "2.4%" : "0" } borderRadius="0.5vw" width="80vw" p="1.2vw" border="1px solid #E8E8E8" flexDir="column" mt="4vh">
                 <Flex alignItems="center" justifyContent="flex-start">

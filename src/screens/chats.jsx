@@ -117,7 +117,7 @@ export default function Chats (){
             const res = await api("post", "/buscarUserChat", {search:emailInput});
             if (res.result[0]) {
                 if (typeof res.result[1] !== "string") {
-                    setChatEmail({...res.result[1][Object.keys(res.result[1])[0]], uid:Object.keys(res.result[1])[0]});
+                    setChatEmail(res.result[1]);
                 } else {
                     setChatEmail( res.result[1]);   
                 }
@@ -206,24 +206,26 @@ export default function Chats (){
                 <Flex overflowY="scroll" h="100%" flexDir="column" >
                     { !cargando ? 
                         buscarChatEmail ?
-                            typeof chatEmail === "object" ?
-                                <Flex alignItems="center" bg={chatSelect.uid === chatEmail.uid ? "#eeeeee" : "transparent"} key={chatEmail.uid} onClick={()=>{setChat(false); selectChat(chatEmail); setChatSelect(chatEmail)}} mb="2vh" cursor="pointer" _hover={{backgroundColor:"#f8f8f8"}} borderRadius="0.6vw" p="2%">
-                                    {chatEmail.imagenPerfil ? 
-                                        <Flex backgroundImage={require("../assets/user.png")} backgroundSize="contain" backgroundRepeat="no-repeat" borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw">
-                                            <Image borderRadius="2vw" w="3vw" h="3vw" src={chatEmail.imagenPerfil} /> 
-                                        </Flex> 
-                                        : 
-                                        <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
-                                    }
-                                    <Flex w="100%" flexDir="column">
-                                        <Text color={chatEmail.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{chatEmail.nombre.length > 21 ? chatEmail.nombre.slice(0, 21)+"..." : chatEmail.nombre}</Text>
-                                        <Text fontWeight={!chatEmail.ultimaActualizacion && "bold"} fontSize="2.2vh" color={chatEmail.delCuenta ? "#c43131" : chatEmail.bold ? "#000" : "#666666"}>{chatEmail.ultimaActualizacion ? getUltimoMsg(chatEmail.chatSoporte).length > 25 ? getUltimoMsg(chatEmail.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatEmail.chatSoporte) : "Sin mensajes"}</Text>
-                                        <Flex alignItems="center">
-                                            <Flex bg={chatEmail.delCuenta ? "#c43131" : chatEmail.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
-                                            <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{chatEmail.ultimaActualizacion ? fechaMsg(chatEmail.ultimaActualizacion) : "-"}</Text>
+                            Array.isArray(chatEmail) ?
+                                chatEmail.map((chatSearch)=>(
+                                    <Flex alignItems="center" bg={chatSelect.uid === chatSearch.uid ? "#eeeeee" : "transparent"} key={chatSearch.uid} onClick={()=>{setChat(false); selectChat(chatSearch); setChatSelect(chatSearch)}} mb="2vh" cursor="pointer" _hover={{backgroundColor:"#f8f8f8"}} borderRadius="0.6vw" p="2%">
+                                        {chatSearch.imagenPerfil ? 
+                                            <Flex backgroundImage={require("../assets/user.png")} backgroundSize="contain" backgroundRepeat="no-repeat" borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw">
+                                                <Image borderRadius="2vw" w="3vw" h="3vw" src={chatSearch.imagenPerfil} /> 
+                                            </Flex> 
+                                            : 
+                                            <Image src={require("../assets/user.png")} borderRadius="2vw" mr="0.7vw" w="3vw" h="3vw"/>
+                                        }
+                                        <Flex w="100%" flexDir="column">
+                                            <Text color={chatSearch.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{chatSearch.nombre.length > 21 ? chatSearch.nombre.slice(0, 21)+"..." : chatSearch.nombre}</Text>
+                                            <Text fontWeight={!chatSearch.ultimaActualizacion && "bold"} fontSize="2.2vh" color={chatSearch.delCuenta ? "#c43131" : chatSearch.bold ? "#000" : "#666666"}>{chatSearch.ultimaActualizacion ? getUltimoMsg(chatSearch.chatSoporte).length > 25 ? getUltimoMsg(chatSearch.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatSearch.chatSoporte) : "Sin mensajes"}</Text>
+                                            <Flex alignItems="center">
+                                                <Flex bg={chatSearch.delCuenta ? "#c43131" : chatSearch.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
+                                                <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{chatSearch.ultimaActualizacion ? fechaMsg(chatSearch.ultimaActualizacion) : "-"}</Text>
+                                            </Flex>
                                         </Flex>
                                     </Flex>
-                                </Flex>
+                                ))
                                 : <Text>{ chatEmail === "no-existe" ? "No se encontraron resultados." : chatEmail}</Text>
                         : (chats.length > 0) ? 
                             chats.map((user)=>(

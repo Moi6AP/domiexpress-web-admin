@@ -337,7 +337,7 @@ export default function General (){
                                             </Flex>
                                         </Flex>
                                     </Flex>
-                            ))}
+                                ))}
                             </Flex>
                         :   <Text mx="auto" color="#616161" mt="3.5vh">{searchUsers}</Text>
                     : usersAdmin == undefined ?

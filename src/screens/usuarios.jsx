@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Input, InputGroup, InputRightElement, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import api from "../utils/api";
 import { getFecha } from "../utils/funciones";
@@ -19,6 +19,11 @@ export default function Repartidores (){
     const [modalAddUser, setModalAddUser] = useState(false);
 
     const inputsAddUser = useRef({nombre:"", email:"", pass:""});
+
+    const [cargandoSearch, setCargandoSearch] = useState(false);
+    const [searchUsers, setSearchUsers] = useState(false);
+    const [searchInput, setSearchInput] = useState("");
+    const [isSearch, setIsSearch] = useState(false);
     
     async function getUsuarios (){
         setLoadData(true);
@@ -88,6 +93,28 @@ export default function Repartidores (){
         }
     }
 
+    async function buscarUser (e){
+        e.preventDefault();
+        setIsSearch(true);
+        if (searchInput !== "" && !cargandoSearch) {
+            setCargandoSearch(true);
+            const res = await api("post", "/buscarUser", {search:searchInput, rol:"normal"});
+            if (res.result[0]) {
+                if (typeof res.result[1] !== "string") {
+                    console.log(res.result[1]);
+                    setSearchUsers(res.result[1]);
+                } else {
+                    setSearchUsers( res.result[1]);   
+                }
+            } else {
+                setSearchUsers(res.result[1]);
+            }
+            setCargandoSearch(false);
+        } else {
+            setIsSearch(false);
+        }
+    }
+
      useEffect(()=>{
         getUsuarios();
      }, []);
@@ -112,6 +139,15 @@ export default function Repartidores (){
             <Flex pb={ultimoElemento === false ? "2.4%" : "0" } borderRadius="0.5vw" width="80vw" p="1.2vw" border="1px solid #E8E8E8" flexDir="column" mt="4vh">
                 <Flex alignItems="center" justifyContent="space-between">
                     <Text ml="1vw" fontSize="3.5vh" fontWeight="800">Usuarios</Text>
+                    <form style={{display:usuarios?.length > 0 ? "flex" : "none", marginLeft:"auto", marginRight:"auto", height:"10%", alignItems:"center", width:"40%"}} >
+                        <InputGroup>
+                            <Input value={searchInput} onChange={(e)=>setSearchInput(e.target.value)} type="email" outline="none" _focus={{border:"1px solid #d8d8d8", boxShadow:"0px 0px 3px 1px #d8d8d8"}} w="100%" p="0.5vw" borderRadius="0.4vw" border="1px solid #b4b4b4" placeholder="Busca un usuario por ID, email.."/>
+                            <InputRightElement display={(isSearch && !cargandoSearch) ? "flex" :  "none"} onClick={()=>{setSearchInput(""); setIsSearch(false); setSearchUsers(false);}} cursor="pointer" h="100%" pr="1%" alignItems="center">
+                                <Image w="1.6vw" h="1.6vw" src={require("../assets/x.png")} />
+                            </InputRightElement>
+                        </InputGroup>
+                        <Button onClick={(e)=>buscarUser(e)} type="submit" display="none" />
+                    </form>
                     <Button onClick={()=>setModalAddUser(true)} transition="all 0.2s" cursor="pointer" _hover={{backgroundColor:"#38C95B"}} mr="1.5vw" borderRadius="1vh" p="1.3vh" bg="#56D675" border="none" >
                         <Text fontWeight="bold" color="#fff">Agregar Usuario</Text>
                     </Button>

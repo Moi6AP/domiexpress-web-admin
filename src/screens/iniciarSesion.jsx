@@ -17,7 +17,18 @@ export default function IniciarSesion ({isLogueado}){
                 isLogueado(true);
             })
             .catch((e)=>{
-                alert(e.code);
+                console.log(e.code);
+                if (e.code == "auth/invalid-email") {
+                    alert("Ingresa un correo valido.");
+                } else if (e.code == "auth/user-not-found") {
+                    alert("El correo ingresado no pertenece a ninguna cuenta.");
+                } else if (e.code == "auth/wrong-password") {
+                    alert("La contraseña es incorrecta.");
+                } else if (e.code == "auth/too-many-requests") {
+                    alert("Muchos intentos fallidos, vuelve a intentarlo mas tarde.");
+                } else {
+                    alert("Sucedio un error. Comprueba tu conexión a internet.");
+                }
             });
         } else {
             alert("Rellena los campos faltantes.");

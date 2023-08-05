@@ -216,8 +216,8 @@ export default function Repartidores (){
                         </Flex>
                     : <Flex m="1%" ><Text color="#616161">Sin solicitudes de verificación.</Text></Flex>
                 }
-                <Flex display={ultimoElementoSolicitudes !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getSolicitudes()}}>
-                    { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : "Ver mas"} 
+                <Flex display={ultimoElementoSolicitudes !== false ? "block" : "none"} cursor="pointer" justifyContent="center" mx="auto" p="0.2%" my="1.2%" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getSolicitudes()}}>
+                    { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : <Text fontSize="2.3vh" textAlign="center">Ver mas</Text>} 
                 </Flex>
             </Flex>
 
@@ -278,8 +278,8 @@ export default function Repartidores (){
                         </Flex>
                     : <Flex m="1%" ><Text color="#616161">Sin repartidores.</Text></Flex>
                 }
-                <Flex display={ultimoElemento !== false ? "block" : "none"} cursor="pointer" mx="auto" fontSize="2.3vh" p="0.2%" my="1.2%" textAlign="center" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getRepartidores()}}>
-                    { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : "Ver mas"} 
+                <Flex display={ultimoElemento !== false ? "block" : "none"} cursor="pointer" justifyContent="center" mx="auto" p="0.2%" my="1.2%" borderRadius="5%" bg="#e6e6e6" w="10%"  onClick={()=>{!loadData && getRepartidores()}}>
+                    { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : <Text fontSize="2.3vh" textAlign="center">Ver mas</Text>} 
                 </Flex>
             </Flex>
     </Box>

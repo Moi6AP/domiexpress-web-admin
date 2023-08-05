@@ -165,7 +165,7 @@ export default function Repartidores (){
                                         <Text color="#666666" fontWeight="bold">Correo electronico</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
-                                        <Text color="#666666" fontWeight="bold">Cant. Pedidos</Text>
+                                        <Text color="#666666" fontWeight="bold">Pedidos</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="12%" borderRight="1px solid #E8E8E8">
                                         <Text color="#666666" fontWeight="bold">Saldo</Text>
@@ -180,10 +180,10 @@ export default function Repartidores (){
                                 { searchUsers.map((usuario)=>(
                                         <Flex key={usuario.uid} borderTop="1px solid #E8E8E8" width="100%">
                                             <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                                <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.nombre}</Text>
+                                                <Text title={usuario.nombre} color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.nombre.length > 20 ? usuario.nombre.slice(0, 20)+"..." : usuario.nombre}</Text>
                                             </Flex>
                                             <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                                <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.email}</Text>
+                                                <Text title={usuario.email} color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.email.length > 15 ? usuario.email.slice(0, 15)+"..." : usuario.email}</Text>
                                             </Flex>
                                             <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
                                                 <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.cantidadPedidosRealizados}</Text>
@@ -220,7 +220,7 @@ export default function Repartidores (){
                                     <Text color="#666666" fontWeight="bold">Correo electronico</Text>
                                 </Flex>
                                 <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Cant. Pedidos</Text>
+                                    <Text color="#666666" fontWeight="bold">Pedidos</Text>
                                 </Flex>
                                 <Flex p="1vh" justifyContent="center" w="12%" borderRight="1px solid #E8E8E8">
                                     <Text color="#666666" fontWeight="bold">Saldo</Text>
@@ -235,10 +235,10 @@ export default function Repartidores (){
                            { usuarios.map((usuario)=>(
                                 <Flex key={usuario.uid} borderTop="1px solid #E8E8E8" width="100%">
                                     <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                        <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.nombre}</Text>
+                                        <Text title={usuario.nombre} color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.nombre.length > 20 ? usuario.nombre.slice(0, 20)+"..." : usuario.nombre}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                        <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.email}</Text>
+                                        <Text title={usuario.email} color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.email.length > 15 ? usuario.email.slice(0, 15)+"..." : usuario.email}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
                                         <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.cantidadPedidosRealizados}</Text>

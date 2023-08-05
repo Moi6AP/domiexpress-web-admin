@@ -277,7 +277,7 @@ export default function Repartidores (){
                                         <Text color="#666666" fontWeight="bold">Correo electronico</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
-                                        <Text color="#666666" fontWeight="bold">Cant. Pedidos</Text>
+                                        <Text color="#666666" fontWeight="bold">Pedidos</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="15%" borderRight="1px solid #E8E8E8">
                                         <Text color="#666666" fontWeight="bold">Ganancias</Text>
@@ -289,10 +289,10 @@ export default function Repartidores (){
                                 { searchUsers.map((repartidor)=>(
                                         <Flex key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
                                             <Flex p="1vh" justifyContent="center" w="29%" borderRight="1px solid #E8E8E8">
-                                                <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre}</Text>
+                                                <Text title={repartidor.nombre} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre.length > 20 ? repartidor.nombre.slice(0, 20)+"..." : repartidor.nombre}</Text>
                                             </Flex>
                                             <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                                <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.email}</Text>
+                                                <Text title={repartidor.email} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.email.length > 15 ? repartidor.email.slice(0, 15)+"..." : repartidor.email}</Text>
                                             </Flex>
                                             <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
                                                 <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.cantidadPedidosRealizados}</Text>
@@ -326,7 +326,7 @@ export default function Repartidores (){
                                     <Text color="#666666" fontWeight="bold">Correo electronico</Text>
                                 </Flex>
                                 <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
-                                    <Text color="#666666" fontWeight="bold">Cant. Pedidos</Text>
+                                    <Text color="#666666" fontWeight="bold">Pedidos</Text>
                                 </Flex>
                                 <Flex p="1vh" justifyContent="center" w="15%" borderRight="1px solid #E8E8E8">
                                     <Text color="#666666" fontWeight="bold">Ganancias</Text>
@@ -338,10 +338,10 @@ export default function Repartidores (){
                            { repartidores.map((repartidor)=>(
                                 <Flex key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
                                     <Flex p="1vh" justifyContent="center" w="29%" borderRight="1px solid #E8E8E8">
-                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre}</Text>
+                                        <Text title={repartidor.nombre} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre.length > 20 ? repartidor.nombre.slice(0, 20)+"..." : repartidor.nombre}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
-                                        <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.email}</Text>
+                                        <Text title={repartidor.email} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.email.length > 15 ? repartidor.email.slice(0, 15)+"..." : repartidor.email}</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="13%" borderRight="1px solid #E8E8E8">
                                         <Text color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.cantidadPedidosRealizados}</Text>

@@ -228,7 +228,7 @@ export default function ChatsAdmin (){
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                                : <Text>{ chatEmail}</Text>
+                                : <Text color="#616161">{ chatEmail}</Text>
                         :  chats.length > 0 ? 
                             chats.map((user)=>(
                                 <Flex alignItems="center" bg={chatSelect.uid == user.uid ? "#eeeeee" : "transparent"} key={user.uid} onClick={()=>{ setTimeout(()=>inputSendMsgRef.current.focus(), 50); setChat(false); selectChat(user); setChatSelect(user)}} mb="2vh" cursor="pointer" _hover={{backgroundColor:"#f8f8f8"}} borderRadius="0.6vw" p="2%">
@@ -248,7 +248,7 @@ export default function ChatsAdmin (){
                                     </Flex>
                                 </Flex>
                             ))
-                            : <Text>No tienes chats :)</Text>
+                            : <Text color="#616161">No tienes chats :)</Text>
                         : <Spinner mx="auto" color="#646464" mt="1vh" w="1vw" h="1vw" /> }
                 </Flex>
             </Flex>

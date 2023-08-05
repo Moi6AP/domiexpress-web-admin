@@ -339,7 +339,7 @@ export default function General (){
                                     </Flex>
                             ))}
                             </Flex>
-                        :   <Text mx="auto" color="#424242" mt="3.5vh">{searchUsers}</Text>
+                        :   <Text mx="auto" color="#616161" mt="3.5vh">{searchUsers}</Text>
                     : usersAdmin == undefined ?
                         <Spinner ml="auto" mr="auto" color="#646464" my="2vh" w="1.2vw" h="1.2vw"/>
                     : usersAdmin.length > 0 ?

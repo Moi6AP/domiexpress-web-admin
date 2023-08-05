@@ -177,7 +177,7 @@ export default function Repartidores (){
                                         <Text color="#666666" fontWeight="bold">Creación</Text>
                                     </Flex>
                                 </Flex>
-                                { usuarios.map((usuario)=>(
+                                { searchUsers.map((usuario)=>(
                                         <Flex key={usuario.uid} borderTop="1px solid #E8E8E8" width="100%">
                                             <Flex p="1vh" justifyContent="center" w="25%" borderRight="1px solid #E8E8E8">
                                                 <Text color={usuario.delCuenta ? "#c91212" : "#000"}>{usuario.nombre}</Text>

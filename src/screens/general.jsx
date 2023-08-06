@@ -382,8 +382,8 @@ export default function General (){
                         </Flex> 
                     : <Flex m="1%" ><Text color="#616161">Sin usuarios registrados.</Text></Flex>
                 }
-                <Flex display={ultimoElementoUsersAdmin !== false ? "block" : "none"} cursor="pointer" justifyContent="center" mx="auto" p="0.2%" my="1.2%" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getUsersAdmin()}}>
-                    { loadData ? <Spinner ml="auto" mr="auto" color="#646464" w="0.7vw" h="0.7vw"/> : <Text fontSize="2.3vh" textAlign="center">Ver mas</Text>} 
+                <Flex display={ultimoElementoUsersAdmin !== false ? "flex" : "none"} cursor="pointer" justifyContent="center" mx="auto" p="0.2%" my="1.2%" borderRadius="5%" bg="#e6e6e6" w="10%" onClick={()=>{!loadData && getUsersAdmin()}}>
+                    { loadData ? <Spinner m="2%" color="#646464" w="0.7vw" h="0.7vw"/> : <Text fontSize="2.3vh" textAlign="center">Ver mas</Text>} 
                 </Flex>
             </Flex>
 

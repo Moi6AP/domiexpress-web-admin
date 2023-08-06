@@ -9,7 +9,9 @@ export const chatSoporteAdminContext = createContext({
     setChatSoporteAdmin:()=>{}
 });
 
-export default function ChatSoporteAdminProvider ({isLogueado, children}){
+export default function ChatSoporteAdminProvider ({isLogueado: isLogueadoProp, children}){
+
+    const isLogueado = useRef(isLogueadoProp);
 
     const [chatSoporteAdmin, setChatSoporteAdmin] = useState(false);
     const [newNotificacion, setNewNotificacion] = useState(false);
@@ -68,8 +70,10 @@ export default function ChatSoporteAdminProvider ({isLogueado, children}){
         }
     }
 
-    if (isLogueado === true) {
+    if (isLogueado.current === true) {
+        console.log("aasdasd");
         onMensajesAdmin();
+        isLogueado.current = false;
     }
 
     return (

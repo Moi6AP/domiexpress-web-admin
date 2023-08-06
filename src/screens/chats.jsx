@@ -220,7 +220,7 @@ export default function Chats (){
                                             <Text color={chatSearch.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{chatSearch.nombre.length > 21 ? chatSearch.nombre.slice(0, 21)+"..." : chatSearch.nombre}</Text>
                                             <Text fontWeight={!chatSearch.ultimaActualizacion && "bold"} fontSize="2.2vh" color={chatSearch.delCuenta ? "#c43131" : chatSearch.bold ? "#000" : "#666666"}>{chatSearch.ultimaActualizacion ? getUltimoMsg(chatSearch.chatSoporte).length > 25 ? getUltimoMsg(chatSearch.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(chatSearch.chatSoporte) : "Sin mensajes"}</Text>
                                             <Flex alignItems="center">
-                                                <Flex bg={chatSearch.delCuenta ? "#c43131" : chatSearch.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
+                                                <Flex bg={chatSearch.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                                 <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{chatSearch.ultimaActualizacion ? fechaMsg(chatSearch.ultimaActualizacion) : "-"}</Text>
                                             </Flex>
                                         </Flex>
@@ -241,7 +241,7 @@ export default function Chats (){
                                         <Text color={user.delCuenta ? "#c43131" : "#000"} fontWeight="bold">{user.nombre.length > 21 ? user.nombre.slice(0, 21)+"..." : user.nombre}</Text>
                                         <Text fontWeight={!user.ultimaActualizacion ? "bold" : user.bold ? "900" : "normal"} fontSize="2.2vh" color={user.delCuenta ? "#c43131" : user.bold ? "#000" : "#666666"}>{user.ultimaActualizacion ? getUltimoMsg(user.chatSoporte).length > 25 ? getUltimoMsg(user.chatSoporte).slice(0, 25)+"..." : getUltimoMsg(user.chatSoporte) : "Sin mensajes"}</Text>
                                         <Flex alignItems="center">
-                                            <Flex bg={user.delCuenta ? "#c43131" : user.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
+                                            <Flex bg={user.rol == "normal" ? "#ebaa33" : "#323dce"} borderRadius="10px" h="7px" w="7px" />
                                             <Text ml="auto" mr="2%" fontSize="1.8vh" color="#868686">{user.ultimaActualizacion ? fechaMsg(user.ultimaActualizacion) : "-"}</Text>
                                         </Flex>
                                     </Flex>

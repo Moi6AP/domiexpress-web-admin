@@ -13,6 +13,7 @@ import IniciarSesion from "./screens/iniciarSesion";
 import IfAuthFalseRedirigir from './components/IfAuthFalseRedirigir';
 import api from './utils/api';
 import ChatSoporteProvider from './context/chatSoporteContextProvider';
+import ServiciosProvider from './context/serviciosContextProvider';
 import ChatSoporteAdminProvider from './context/chatSoporteAdminContextProvider';
 
 export default function App (){
@@ -44,29 +45,31 @@ export default function App (){
 
     return (
         <BrowserRouter>
-            <ChatSoporteAdminProvider isLogueado={userSession}>
-                <ChatSoporteProvider isLogueado={userSession}>
-                    <IfAuthFalseRedirigir userSession={userSession} />
-                    { userSession && <Navbar logout={setUserSession} />}
-                    { userSession ?
-                        <Flex h="100vh" ml="15vw" bg="#313131">
-                            <Flex p="2vh" w="100%" borderRadius="1vh" m="0.7vw" bg="#fff">
-                                <Routes>
-                                    <Route path="/" element={<General/>} />
-                                    <Route path="/repartidores" element={<Repartidores/>} />
-                                    <Route path="/usuarios" element={<Usuarios/>} />
-                                    <Route path="/chats" element={<Chats/>} />
-                                    <Route path="/chatsAdmin" element={<ChatsAdmin/>} />
-                                </Routes>
+            <ServiciosProvider isLogueado={userSession}>
+                <ChatSoporteAdminProvider isLogueado={userSession}>
+                    <ChatSoporteProvider isLogueado={userSession}>
+                        <IfAuthFalseRedirigir userSession={userSession} />
+                        { userSession && <Navbar logout={setUserSession} />}
+                        { userSession ?
+                            <Flex h="100vh" ml="15vw" bg="#313131">
+                                <Flex p="2vh" w="100%" borderRadius="1vh" m="0.7vw" bg="#fff">
+                                    <Routes>
+                                        <Route path="/" element={<General/>} />
+                                        <Route path="/repartidores" element={<Repartidores/>} />
+                                        <Route path="/usuarios" element={<Usuarios/>} />
+                                        <Route path="/chats" element={<Chats/>} />
+                                        <Route path="/chatsAdmin" element={<ChatsAdmin/>} />
+                                    </Routes>
+                                </Flex>
                             </Flex>
-                        </Flex>
-                        :
-                        <Routes>
-                            <Route path="/" element={<IniciarSesion isLogueado={setUserSession} />} />
-                        </Routes>
-                    }
-                </ChatSoporteProvider>
-            </ChatSoporteAdminProvider>
+                            :
+                            <Routes>
+                                <Route path="/" element={<IniciarSesion isLogueado={setUserSession} />} />
+                            </Routes>
+                        }
+                    </ChatSoporteProvider>
+                </ChatSoporteAdminProvider>
+            </ServiciosProvider>
         </BrowserRouter>
     )
 }

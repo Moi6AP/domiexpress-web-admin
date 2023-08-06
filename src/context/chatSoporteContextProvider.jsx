@@ -9,7 +9,9 @@ export const chatSoporteContext = createContext({
     setChatSoporte:()=>{}
 });
 
-export default function ChatSoporteProvider ({isLogueado, children}){
+export default function ChatSoporteProvider ({isLogueado: isLogueadoProp, children}){
+
+    const isLogueado = useRef(isLogueadoProp);
 
     const [chatSoporte, setChatSoporte] = useState(false);
     const [newNotificacion, setNewNotificacion] = useState(false);
@@ -60,8 +62,9 @@ export default function ChatSoporteProvider ({isLogueado, children}){
         });
     }
 
-    if (isLogueado === true) {
+    if (isLogueado.current === true) {
         onMensajesSoporte();
+        isLogueado.current = false;
     }
 
     return (

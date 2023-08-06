@@ -287,7 +287,7 @@ export default function Repartidores (){
                                     </Flex>
                                 </Flex>
                                 { searchUsers.map((repartidor)=>(
-                                        <Flex key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
+                                        <Flex transition="background-color 0.15s" cursor="pointer" _hover={{backgroundColor:"#fafafa"}} key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
                                             <Flex p="1vh" justifyContent="center" w="29%" borderRight="1px solid #E8E8E8">
                                                 <Text title={repartidor.nombre} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre.length > 20 ? repartidor.nombre.slice(0, 20)+"..." : repartidor.nombre}</Text>
                                             </Flex>
@@ -336,7 +336,7 @@ export default function Repartidores (){
                                 </Flex>
                             </Flex>
                            { repartidores.map((repartidor)=>(
-                                <Flex key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
+                                <Flex transition="background-color 0.15s" cursor="pointer" _hover={{backgroundColor:"#fafafa"}} key={repartidor.uid} borderTop="1px solid #E8E8E8" width="100%">
                                     <Flex p="1vh" justifyContent="center" w="29%" borderRight="1px solid #E8E8E8">
                                         <Text title={repartidor.nombre} color={repartidor.delCuenta ? "#c91212" : "#000"}>{repartidor.nombre.length > 20 ? repartidor.nombre.slice(0, 20)+"..." : repartidor.nombre}</Text>
                                     </Flex>

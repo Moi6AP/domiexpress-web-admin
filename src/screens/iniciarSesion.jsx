@@ -26,6 +26,8 @@ export default function IniciarSesion ({isLogueado}){
                     alert("La contraseña es incorrecta.");
                 } else if (e.code == "auth/too-many-requests") {
                     alert("Muchos intentos fallidos, vuelve a intentarlo mas tarde.");
+                } else if (e.code == "auth/user-disabled") {
+                    alert("Lo sentimos, Tu cuenta ha sido deshabilitada.");
                 } else {
                     alert("Sucedio un error. Comprueba tu conexión a internet.");
                 }

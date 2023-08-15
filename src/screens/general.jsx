@@ -129,10 +129,22 @@ export default function General (){
             console.log(res);
             if (res.result[0] == true) {
                 const usersAdminNew = [...usersAdmin];
-                usersAdminNew[usersAdminNew.findIndex(e => e.uid === id)].delCuenta = true;
+                
+
+                try {
+                    usersAdminNew[usersAdminNew.findIndex(e => e.uid === id)].delCuenta = true;
+
+                    if (searchUsers !== false) {
+                        const searchUsersNew = [...searchUsers];
+                        searchUsersNew[searchUsersNew.findIndex(a => a.uid == id)].delCuenta = true;
+                        setSearchUsers(searchUsersNew);
+                    }
+                } catch {
+                }
                 
                 setUsersAdmin(usersAdminNew);
                 setInfoGeneral({...infoGeneral, usersAdmin:infoGeneral.usersAdmin-1});
+
                 alert("Usuario eliminado correctamente.");
             } else {
                 alert(res.result[1]);

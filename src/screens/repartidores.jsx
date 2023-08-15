@@ -124,7 +124,17 @@ export default function Repartidores (){
 
             if (res.result[0] == true) {
                 const repartidoresNew = [...repartidores];
-                repartidoresNew[repartidoresNew.findIndex(a => a.uid == id)].delCuenta = true;
+
+                try {
+                    repartidoresNew[repartidoresNew.findIndex(a => a.uid == id)].delCuenta = true;
+
+                    if (searchUsers !== false) {
+                        const searchUsersNew = [...searchUsers];
+                        searchUsersNew[searchUsersNew.findIndex(a => a.uid == id)].delCuenta = true;
+                        setSearchUsers(searchUsersNew);
+                    }
+                } catch {
+                }
 
                 setRepartidores(repartidoresNew);
                 alert("Usuario eliminado correctamente.");

@@ -46,7 +46,17 @@ export default function Repartidores (){
 
             if (res.result[0] == true) {
                 const usuariosNew = [...usuarios];
-                usuariosNew[usuariosNew.findIndex(a => a.uid == id)].delCuenta = true;
+                
+                try {
+                    usuariosNew[usuariosNew.findIndex(a => a.uid == id)].delCuenta = true;
+                    
+                    if (searchUsers !== false) {
+                        const searchUsersNew = [...searchUsers];
+                        searchUsersNew[searchUsersNew.findIndex(a => a.uid == id)].delCuenta = true;
+                        setSearchUsers(searchUsersNew);
+                    }
+                } catch {
+                }
 
                 setUsuarios(usuariosNew);
                 alert("Usuario eliminado correctamente.");

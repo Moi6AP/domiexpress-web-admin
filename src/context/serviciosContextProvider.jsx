@@ -22,11 +22,11 @@ export default function ChatSoporteAdminProvider ({isLogueado:isLogueadoProp, ch
 
         function onMsg (){
                 try {
-                    audio.current.play();
+                   /*  audio.current.play();
                     setNewNotificacion(true);
                     setTimeout(()=>{
                         setNewNotificacion(false);
-                    }, 3300);
+                    }, 3300); */
                 } catch (err) {
                     console.log(err);
                     alert("Para emitir el sonido de notificacion, primero debes interactuar con la pagina (Da un click en cualquier parte).");

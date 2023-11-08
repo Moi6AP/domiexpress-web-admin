@@ -71,7 +71,6 @@ export default function ChatSoporteAdminProvider ({isLogueado: isLogueadoProp, c
     }
 
     if (isLogueado.current === true) {
-        console.log("aasdasd");
         onMensajesAdmin();
         isLogueado.current = false;
     }

@@ -77,7 +77,7 @@ export default function Repartidores (){
             const res = await api("post", "/aceptarRepartidorSolicitud", data);
             if (res.result[0]) {
                 alert("Respuesta de solicitud de verificación enviada correctamente!");
-                const solicitudesNew = {...solicitudes};
+                const solicitudesNew = [...solicitudes];
                 solicitudesNew.splice(solicitudesNew.findIndex(e => e.uid == uid), 1);
                 setSolicitudes(solicitudesNew);
             } else {
@@ -173,8 +173,17 @@ export default function Repartidores (){
 
     return (
         <Box overflowX="hidden" overflowY="scroll" height="100%" width="82vw" p="2vh">
-            <Modal isOpen={modalVerDocumentos} onClose={()=>setModalVerDocumentos(false)}>
+            <Modal isOpen={modalVerDocumentos !== false ? true : false} onClose={()=>setModalVerDocumentos(false)}>
+                <Flex maxH="70vh" overflowY="scroll" p="1vw" flexDir="column">
+                    <Text>Imagen rostro del repartidor:</Text>
+                    <Image cursor="pointer" onClick={()=>window.open(modalVerDocumentos?.fotoRostro)} mt="1vw" mx="auto" w="14vw" h="14vw" src={modalVerDocumentos?.fotoRostro} />
 
+                    <Text mt="2vw">Imagen documento por delante:</Text>
+                    <Image resize="cover" cursor="pointer" onClick={()=>window.open(modalVerDocumentos?.fotoDocumentoFrente)} mt="1vw" mx="auto" w="14vw" h="14vw" src={modalVerDocumentos?.fotoDocumentoFrente} />
+
+                    <Text mt="2vw">Imagen documento por detras:</Text>
+                    <Image resize="cover" cursor="pointer" onClick={()=>window.open(modalVerDocumentos?.fotoDocumentoAtras)} mt="1vw" mx="auto" w="14vw" h="14vw" src={modalVerDocumentos?.fotoDocumentoAtras} />
+                </Flex> 
             </Modal>
 
             <Modal isOpen={modalAddUser} onClose={()=>setModalAddUser(false)}>
@@ -241,7 +250,7 @@ export default function Repartidores (){
                                     <Flex p="1vh" justifyContent="center" w="18%" borderRight="1px solid #E8E8E8">
                                         <Text>{getFecha(solicitud.timestamp["_seconds"])}</Text>
                                     </Flex>
-                                    <Flex cursor="pointer" p="1vh" justifyContent="center" w="15%" borderRight="1px solid #E8E8E8">
+                                    <Flex onClick={()=>setModalVerDocumentos(solicitud.linksImagenesDeVerificacion)} cursor="pointer" p="1vh" justifyContent="center" w="15%" borderRight="1px solid #E8E8E8">
                                         <Text textAlign="center" w="50%" bg="#E4E4E4" >Ver</Text>
                                     </Flex>
                                     <Flex p="1vh" justifyContent="center" w="15%" borderRight="1px solid #E8E8E8">
